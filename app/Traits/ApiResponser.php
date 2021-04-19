@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait ApiResponser
 {
-	protected function defaultWithDataResponse($success,$title,$message="",$messages=[],$data=null,$code=200){
+	protected function defaultJsonResponse($success,$title,$message="",$messages=[],$data=null,$code=200){
 
 		return response()->json(
 			[
@@ -19,7 +19,7 @@ trait ApiResponser
 
 	}
 
-	protected function defaultWithoutDataResponse($success,$title,$message="",$messages=[],$code){
+	protected function defaultJsonResponseWithoutData($success,$title,$message="",$messages=[],$code=200){
 
 		return response()->json(
 			[
@@ -33,7 +33,7 @@ trait ApiResponser
 
 	}
 
-	protected function validateResponseJson($request, $rules, array $messages = [], array $customAttributes = [])
+	protected function validateRequestJson($request, $rules, array $messages = [], array $customAttributes = [])
 	{
 		$validated = false;
 		$errors = [];

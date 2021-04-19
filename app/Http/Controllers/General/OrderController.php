@@ -39,7 +39,7 @@ class OrderController extends Controller
             "meals" => "required|array",
             "user" => "required"
         ];
-        $validacionRequest = $this->validateResponseJson($request->all(), $rules);
+        $validacionRequest = $this->validateRequestJson($request->all(), $rules);
 
         if (!$validacionRequest->validated) {
             return response()->json(["success" => false, "title" => "Datos faltantes", "message" => "Hay datos obligatorios no enviados","messages" => $validacionRequest->errors], 422);
