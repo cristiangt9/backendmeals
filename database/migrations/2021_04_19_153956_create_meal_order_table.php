@@ -14,9 +14,9 @@ class CreateMealOrderTable extends Migration
     public function up()
     {
         Schema::create('meal_order', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('role_id');
+            $table->unsignedInteger('meal_id');
+            $table->unsignedInteger('order_id');
+            $table->float('amount', 8, 2);
             $table->timestamps();
         });
     }
