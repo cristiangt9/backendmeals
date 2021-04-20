@@ -48,33 +48,44 @@ class OrdersTest extends TestCase
         $response->assertJson(
             function (AssertableJson $json) {
                 $json->has(
-                    'order',
+                    'data',
                     function ($json) {
-                        $json->where('id', 1)
-                            ->has('user_id')
-                            ->has('created_at')
-                            ->has('updated_at')
-                            ->has('meals.0', function ($json) {
+                        $json->has(
+                            'order',
+                            function ($json) {
                                 $json->where('id', 1)
-                                    ->where('name', 'Sushi')
-                                    ->has('description')
+                                    ->has('user_id')
                                     ->has('created_at')
                                     ->has('updated_at')
-                                    ->has('price')
-                                    ->has('pivot', function ($json) {
-                                        $json
-                                            ->where('meal_id', 1)
-                                            ->where('order_id', 1)
-                                            ->where('amount', 4)
+                                    ->has('meals.0', function ($json) {
+                                        $json->where('id', 1)
+                                            ->where('name', 'Sushi')
+                                            ->has('description')
                                             ->has('created_at')
-                                            ->has('updated_at');
-                                    });
-                            })
-                            ->has('meals.1')
-                            ->has('user');
+                                            ->has('updated_at')
+                                            ->has('price')
+                                            ->has('pivot', function ($json) {
+                                                $json
+                                                    ->where('meal_id', 1)
+                                                    ->where('order_id', 1)
+                                                    ->where('amount', 4)
+                                                    ->has('created_at')
+                                                    ->has('updated_at');
+                                            });
+                                    })
+                                    ->has('meals.1')
+                                    ->has('user');
+                            }
+                        );
                     }
-                );
+                )
+                ->has('success')
+                ->has('title')
+                ->has('message')
+                ->has('messages')
+                ->has('code');
             }
         );
+        
     }
 }

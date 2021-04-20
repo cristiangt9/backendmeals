@@ -42,7 +42,7 @@ class OrderController extends Controller
         $validacionRequest = $this->validateRequestJson($request->all(), $rules);
 
         if (!$validacionRequest->validated) {
-            return response()->json(["success" => false, "title" => "Datos faltantes", "message" => "Hay datos obligatorios no enviados","messages" => $validacionRequest->errors], 422);
+            return $this->defaultJsonResponseWithoutData(false, "Datos faltantes", "Hay datos que no cumplen con la validación", $validacionRequest->errors, 422);
         }
         // iniciar el modo transaccion
         try {
@@ -51,16 +51,15 @@ class OrderController extends Controller
             // crear la orden
             $orderServiceResponse = $this->orderService->create($request->meals, $userResponse["user"]->id);
             
-            return response()->json(["order" => $orderServiceResponse["order"]], 201);
+            return $this->defaultJsonResponse(true, "Orden generada","La orden fue generada satisfactoriamente",null, ["order" => $orderServiceResponse["order"]], 201);
         } catch (\Exception $e) {
             // May day,  rollback!!! rollback!!!
-            return response()->json(["success" =>false, "title" => "Lo sentimos, pero algo fallo", "message" => $e->getMessage(), "messages" => [$e]], 422);
+            return $this->defaultJsonResponseWithoutData(false, "Lo sentimos, pero algo fallo", $e->getMessage(), [$e], 422);
         }
         
         
         // retornar la data creada
         // o retornar el error
-        return response()->json([], 201);
     }
 
     /**

@@ -16,7 +16,7 @@ class UsersTest extends TestCase
     /**
      * @test
      */
-    public function whenSendUserWithCorrectValuesInPostReturnUserCratedWithToken() //Register User
+    public function whenSendUserWithCorrectValuesInPostReturnUserCreatedWithToken() //Register User
     {
         $this->seed();
         // cuando envio el usuario con sus datos correctos
