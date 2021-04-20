@@ -13,7 +13,7 @@ class OrderController extends Controller
 
     public function __construct()
     {
-        parent::__construct();
+        $this->middleware('auth:api')->except(['store']);
         $this->orderService = new OrderService();
     }
     
@@ -52,9 +52,7 @@ class OrderController extends Controller
             return $this->defaultJsonResponseWithoutData(false, "Datos faltantes", "Hay datos que no cumplen con la validación", $validacionRequest->errors, 422);
         }
 
-        // iniciar el modo transaccion
         try {
-
             // crear el usuario
             $userResponse = User::createNew($request->user);
             // crear la orden
@@ -65,10 +63,6 @@ class OrderController extends Controller
             // reporting errors
             return $this->defaultJsonResponseWithoutData(false, "Lo sentimos, pero algo fallo", $e->getMessage(), [$e], 422);
         }
-        
-        
-        // retornar la data creada
-        // o retornar el error
     }
 
     /**

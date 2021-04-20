@@ -33,7 +33,7 @@ class UsersTest extends TestCase
             "postal" => "17005",
             "city" => "Cucuta",
             "password" => "password"
-        ]);
+        ],["Accept" => "application/json"]);
         // recibo un usuario creado y su token para poder crear una sesion en le frontend
         $response->assertStatus(201);
         $response->assertJson(
@@ -84,7 +84,7 @@ class UsersTest extends TestCase
         $response = $this->post('/users/loginApp', [
             "email" => "cristiangt9@gmail.com",
             "password" => "password"
-        ]);
+        ],["Accept" => "application/json"]);
         // recibo un usuario loguedo y su token para poder crear una sesion en le frontend
         $response->assertStatus(200);
         $response->assertJson(

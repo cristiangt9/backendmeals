@@ -42,9 +42,8 @@ class OrdersTest extends TestCase
                 "city" => "Cucuta",
                 "password" => "password"
             ]
-        ]);
+        ], ["Accept" => "application/json"]);
         $response->assertStatus(201);
-        // dd($response->getContent());
         $response->assertJson(
             function (AssertableJson $json) {
                 $json->has(
@@ -79,13 +78,12 @@ class OrdersTest extends TestCase
                         );
                     }
                 )
-                ->has('success')
-                ->has('title')
-                ->has('message')
-                ->has('messages')
-                ->has('code');
+                    ->has('success')
+                    ->has('title')
+                    ->has('message')
+                    ->has('messages')
+                    ->has('code');
             }
         );
-        
     }
 }
