@@ -13,6 +13,12 @@ class UsersTest extends TestCase
 {
     use RefreshDatabase;
     use DatabaseMigrations;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('passport:install');
+    }
     /**
      * @test
      */
@@ -21,31 +27,49 @@ class UsersTest extends TestCase
         $this->seed();
         // cuando envio el usuario con sus datos correctos
         $response = $this->post('/users', [
-            "user" => [
-                "name" => "Cristian Gonzalez",
-                "email" => "cristiangt9@gmail.com",
-                "street" => "calle 17 conjunto Chibará",
-                "postal" => "17005",
-                "city" => "Cucuta",
-                "password" => "password"
-            ]
+            "name" => "Cristian Gonzalez",
+            "email" => "cristiangt9@gmail.com",
+            "street" => "calle 17 conjunto Chibará",
+            "postal" => "17005",
+            "city" => "Cucuta",
+            "password" => "password"
         ]);
         // recibo un usuario creado y su token para poder crear una sesion en le frontend
         $response->assertStatus(201);
         $response->assertJson(
             function (AssertableJson $json) {
-                $json->has(
-                    'user',
-                    function ($json) {
-                        $json->where('id', 1)
-                            ->where('name', 'Cristian Gonzalez')
-                            ->missing('password')
-                            ->has('token');
-                    }
-                );
+                $json->has('success')
+                    ->has("title")
+                    ->has("message")
+                    ->has("messages")
+                    ->has("code")
+                    ->has("data", function ($json) {
+                        $json->has(
+                            'user',
+                            function ($json) {
+                                $json->where('id', 1)
+                                    ->where('name', 'Cristian Gonzalez')
+                                    ->missing('password')
+                                    ->has('token')
+                                    ->has('email')
+                                    ->has('street')
+                                    ->has('postal')
+                                    ->has('city')
+                                    ->has('updated_at')
+                                    ->has('created_at');
+                            }
+                        );
+                    });
             }
         );
     }
+
+
+
+
+
+
+
     /**
      * @test
      */

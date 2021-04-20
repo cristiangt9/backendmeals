@@ -13,7 +13,7 @@ class OrderService
     public function create(array $meals, int $user_id)
     {
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
 
             $order = new Order();
             $order->user_id = $user_id;
@@ -33,11 +33,11 @@ class OrderService
             } else {
                 throw new FailduringCreate("ocurrio un error mientras se guardaba la orden");
             }
-            // DB::commit();
+            DB::commit();
             return ["success" => true, "order" => $order];
         } catch (\Exception $e) {
             //throw $th;
-            // DB::rollback();
+            DB::rollback();
             Log::info($e->getMessage());
         }
     }

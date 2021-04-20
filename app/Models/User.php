@@ -9,10 +9,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CanResetPassword, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -55,13 +60,12 @@ class User extends Authenticatable
             $newUser->city = $userData["city"];
             $newUser->password = Hash::make($userData["password"]);
 
-            if ($newUser->save()) {
-                return ["success" => true, "user" => $newUser];
-            } else {
-                throw new FailduringCreate("error al crear el usuario");
-            }
+            $newUser->save();
+            return ["success" => true, "user" => $newUser];
         } catch (\Exception $e) {
-            return ["success" => true, "error" => $e];
+            return ["success" => false, "error" => $e];
         }
     }
+
+   
 }

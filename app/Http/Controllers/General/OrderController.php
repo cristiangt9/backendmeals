@@ -37,15 +37,23 @@ class OrderController extends Controller
         // validar lo que llego
         $rules = [
             "meals" => "required|array",
-            "user" => "required"
+            "user" => "required",
+            "user.name" => "required",
+            "user.email" => "required|unique:users,email",
+            "user.street" => "required",
+            "user.postal" => "required",
+            "user.city" => "required",
+            "user.password" => "required"
         ];
         $validacionRequest = $this->validateRequestJson($request->all(), $rules);
 
         if (!$validacionRequest->validated) {
             return $this->defaultJsonResponseWithoutData(false, "Datos faltantes", "Hay datos que no cumplen con la validación", $validacionRequest->errors, 422);
         }
+
         // iniciar el modo transaccion
         try {
+
             // crear el usuario
             $userResponse = User::createNew($request->user);
             // crear la orden
@@ -53,7 +61,7 @@ class OrderController extends Controller
             
             return $this->defaultJsonResponse(true, "Orden generada","La orden fue generada satisfactoriamente",null, ["order" => $orderServiceResponse["order"]], 201);
         } catch (\Exception $e) {
-            // May day,  rollback!!! rollback!!!
+            // reporting errors
             return $this->defaultJsonResponseWithoutData(false, "Lo sentimos, pero algo fallo", $e->getMessage(), [$e], 422);
         }
         
