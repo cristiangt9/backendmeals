@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\CredentialsIncorrect;
 use App\Exceptions\FailduringCreate;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -21,7 +23,7 @@ class UserController extends Controller
             "password" => "required"
         ];
         $validationRequest = $this->validateRequestJson($request->all(), $rules);
-        if ($validationRequest->validated) {
+        if (!$validationRequest->validated) {
             $this->defaultJsonResponseWithoutData(false, "Datos faltantes", "Hay datos que no cumplen con la validación", $validationRequest->errors, 422);
         }
 
@@ -40,6 +42,35 @@ class UserController extends Controller
             // respondo con el usuario creado y con token
         } catch (\Exception $e) {
             // respondo con los errores ocurridos
+            return $this->defaultJsonResponseWithoutData(false, "Algo fallo", $e->getMessage(), [$e], 422);
+        }
+    }
+
+    public function loginApp(Request $request)
+    {
+        $rules = [
+            'email' => 'required',
+            'password' => 'required'
+        ];
+
+        $validationRequest = $this->validateRequestJson($request->all(), $rules);
+        if (!$validationRequest->validated) {
+            return $this->defaultJsonResponseWithoutData(false, "Datos faltantes", "Hay datos que no cumplen con la validación", $validationRequest->errors, 422);
+        }
+
+        try {
+            $user = User::where("email", $request->email)->first();
+            
+            if (!Hash::check($request->password, $user->password)) {
+                throw new CredentialsIncorrect("Credenciales Incorrectas");
+            }
+
+            $token = $user->createToken('accessToken');
+            $user = $user->toArray();
+            $user['token'] = $token->accessToken;
+            return $this->defaultJsonResponse(false, "Acceso Concedido", "Las credenciales son correctas, acceso concedido", [], ["user" => $user]);
+        } catch (\Exception $e) {
+
             return $this->defaultJsonResponseWithoutData(false, "Algo fallo", $e->getMessage(), [$e], 422);
         }
     }

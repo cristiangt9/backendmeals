@@ -64,12 +64,6 @@ class UsersTest extends TestCase
         );
     }
 
-
-
-
-
-
-
     /**
      * @test
      */
@@ -77,32 +71,46 @@ class UsersTest extends TestCase
     {
         $this->seed();
         // Primero se crea el usuario de prueba
-        $newUSer = new User();
-        $newUSer->name = "Cristian Gonzalez";
-        $newUSer->email = "cristiangt9@gmail.com";
-        $newUSer->street = "calle 17 conjunto Chibará";
-        $newUSer->postal = "17005";
-        $newUSer->city = "Cucuta";
-        $newUSer->password = "passwor";
+        $newUSer = [];
+        $newUSer['name'] = "Cristian Gonzalez";
+        $newUSer['email'] = "cristiangt9@gmail.com";
+        $newUSer['street'] = "calle 17 conjunto Chibará";
+        $newUSer['postal'] = "17005";
+        $newUSer['city'] = "Cucuta";
+        $newUSer['password'] = "password";
+        User::createNew($newUSer);
 
         // cuando envio el las credenciales del usuario correctos
-        $response = $this->get('/users/loginApp', [
+        $response = $this->post('/users/loginApp', [
             "email" => "cristiangt9@gmail.com",
             "password" => "password"
         ]);
         // recibo un usuario loguedo y su token para poder crear una sesion en le frontend
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJson(
             function (AssertableJson $json) {
-                $json->has(
-                    'user',
-                    function ($json) {
-                        $json->where('id', 1)
-                            ->where('name', 'Cristian Gonzalez')
-                            ->missing('password')
-                            ->has('token');
-                    }
-                );
+                $json->has('success')
+                    ->has("title")
+                    ->has("message")
+                    ->has("messages")
+                    ->has("code")
+                    ->has("data", function ($json) {
+                        $json->has(
+                            'user',
+                            function ($json) {
+                                $json->where('id', 1)
+                                    ->where('name', 'Cristian Gonzalez')
+                                    ->missing('password')
+                                    ->has('token')
+                                    ->has('email')
+                                    ->has('street')
+                                    ->has('postal')
+                                    ->has('city')
+                                    ->has('updated_at')
+                                    ->has('created_at');
+                            }
+                        );
+                    });
             }
         );
     }

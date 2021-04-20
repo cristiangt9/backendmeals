@@ -11,4 +11,9 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ApiResponser;
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
 }
