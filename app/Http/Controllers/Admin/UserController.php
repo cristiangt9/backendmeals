@@ -65,7 +65,7 @@ class UserController extends Controller
         try {
             $user = User::where("email", $request->email)->first();
             
-            if (!Hash::check($request->password, $user->password)) {
+            if ($user == null || !Hash::check($request->password, $user->password)) {
                 throw new CredentialsIncorrect("Credenciales Incorrectas");
             }
 

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Query\MySqlGrammar;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        DB::connection()->setQueryGrammar(new MySqlGrammar);
     }
 }
